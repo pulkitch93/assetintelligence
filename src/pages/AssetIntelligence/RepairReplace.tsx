@@ -193,9 +193,9 @@ export const RepairReplace = () => {
       </Card>
 
       {/* Analysis Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Recommendation Card */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-2 h-fit">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
@@ -262,12 +262,12 @@ export const RepairReplace = () => {
         </Card>
 
         {/* Cost Comparison Chart */}
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-3 h-fit">
           <CardHeader>
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-80 w-full">
+            <div className="h-64 w-full">
               <ChartContainer config={{
                 repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
                 replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
@@ -275,18 +275,21 @@ export const RepairReplace = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={costComparisonData(selectedAsset)}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                    barCategoryGap="20%"
+                    margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                    barCategoryGap="15%"
                   >
                     <XAxis 
                       dataKey="year" 
                       axisLine={false}
                       tickLine={false}
+                      fontSize={12}
                     />
                     <YAxis 
                       tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                       axisLine={false}
                       tickLine={false}
+                      fontSize={12}
+                      width={50}
                     />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}
@@ -296,13 +299,15 @@ export const RepairReplace = () => {
                       dataKey="repair" 
                       fill="hsl(var(--destructive))" 
                       name="Repair Cost"
-                      radius={[4, 4, 0, 0]}
+                      radius={[2, 2, 0, 0]}
+                      maxBarSize={60}
                     />
                     <Bar 
                       dataKey="replace" 
                       fill="hsl(var(--primary))" 
                       name="Replace Cost"
-                      radius={[4, 4, 0, 0]}
+                      radius={[2, 2, 0, 0]}
+                      maxBarSize={60}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -405,7 +410,7 @@ export const RepairReplace = () => {
                         </div>
                       </div>
                       
-                      <div className="h-40 w-full">
+                      <div className="h-32 w-full flex items-center justify-center">
                         <ChartContainer config={{
                           cost: { label: "Cost", color: "hsl(var(--primary))" }
                         }}>
@@ -419,8 +424,8 @@ export const RepairReplace = () => {
                                 ]}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={30}
-                                outerRadius={70}
+                                innerRadius={25}
+                                outerRadius={50}
                                 dataKey="value"
                               >
                                 {[0, 1, 2].map((index) => (
@@ -533,26 +538,26 @@ export const RepairReplace = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <Clock className="h-8 w-8 mx-auto mb-2 text-primary" />
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <p className="text-sm text-muted-foreground">Downtime</p>
-                      <p className="text-xl font-bold">
+                      <p className="text-lg font-bold">
                         {selectedScenario === "repair" ? "48 hours" : "5 days"}
                       </p>
                     </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <DollarSign className="h-8 w-8 mx-auto mb-2 text-primary" />
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <DollarSign className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <p className="text-sm text-muted-foreground">Budget Impact</p>
-                      <p className="text-xl font-bold">
+                      <p className="text-lg font-bold">
                         {selectedScenario === "repair" 
                           ? `$${selectedAsset.repair_cost.toLocaleString()}` 
                           : `$${selectedAsset.replacement_cost.toLocaleString()}`}
                       </p>
                     </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <TrendingUp className="h-8 w-8 mx-auto mb-2 text-primary" />
+                    <div className="text-center p-3 bg-muted rounded-lg">
+                      <TrendingUp className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <p className="text-sm text-muted-foreground">Efficiency Gain</p>
-                      <p className="text-xl font-bold">
+                      <p className="text-lg font-bold">
                         {selectedScenario === "repair" ? "+5%" : "+25%"}
                       </p>
                     </div>
