@@ -802,9 +802,9 @@ export const AssetInsights = () => {
                                 <AlertTriangle className="h-4 w-4 text-warning" />
                                 <span className="text-sm">{failure}</span>
                               </div>
-                            ))}
-                          </div>
-                        </CardContent>
+                             ))}
+                           </div>
+                         </CardContent>
                       </Card>
                     </div>
                   </TabsContent>
