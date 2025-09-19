@@ -313,19 +313,26 @@ export const RepairReplace = () => {
                   </div>
                 </div>
               </div>
-            </div>
             
             {(() => {
               const breakEven = calculateBreakEven(selectedAsset);
               return breakEven ? (
-                <Alert className="mt-4">
-                  <Info className="h-4 w-4" />
-                  <AlertDescription>
-                    Break-even point: Year {breakEven} - Replacement becomes more cost-effective
+                <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
+                  <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <AlertDescription className="text-blue-800 dark:text-blue-200 font-medium">
+                    💡 <strong>Key Insight:</strong> Break-even point at Year {breakEven} - Replacement becomes more cost-effective
                   </AlertDescription>
                 </Alert>
-              ) : null;
+              ) : (
+                <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
+                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <AlertDescription className="text-green-800 dark:text-green-200 font-medium">
+                    💡 <strong>Key Insight:</strong> Repair remains cost-effective throughout the 5-year period
+                  </AlertDescription>
+                </Alert>
+              );
             })()}
+            </div>
           </CardContent>
         </Card>
       </div>
