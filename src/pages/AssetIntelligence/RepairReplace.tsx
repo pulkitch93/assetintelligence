@@ -267,53 +267,52 @@ export const RepairReplace = () => {
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="h-56 w-full">
-              <ChartContainer config={{
-                repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
-                replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
-              }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart 
-                    data={costComparisonData(selectedAsset)}
-                    margin={{ top: 5, right: 5, left: 45, bottom: 25 }}
-                    barCategoryGap="20%"
-                  >
-                    <XAxis 
-                      dataKey="year" 
-                      axisLine={false}
-                      tickLine={false}
-                      fontSize={11}
-                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                    />
-                    <YAxis 
-                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
-                      axisLine={false}
-                      tickLine={false}
-                      fontSize={11}
-                      width={40}
-                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                    />
-                    <ChartTooltip 
-                      content={<ChartTooltipContent />}
-                      formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
-                    />
-                    <Bar 
-                      dataKey="repair" 
-                      fill="hsl(var(--destructive))" 
-                      name="Repair Cost"
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
-                    />
-                    <Bar 
-                      dataKey="replace" 
-                      fill="hsl(var(--primary))" 
-                      name="Replace Cost"
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+            <div className="space-y-4">
+              {/* Cost comparison table */}
+              <div className="grid grid-cols-6 gap-2 text-sm">
+                <div className="font-semibold text-muted-foreground">Option</div>
+                <div className="font-semibold text-center">Year 1</div>
+                <div className="font-semibold text-center">Year 2</div>
+                <div className="font-semibold text-center">Year 3</div>
+                <div className="font-semibold text-center">Year 4</div>
+                <div className="font-semibold text-center">Year 5</div>
+                
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-destructive rounded"></div>
+                  <span>Repair</span>
+                </div>
+                {selectedAsset.projected_costs.repair.map((cost, index) => (
+                  <div key={index} className="text-center font-mono">
+                    ${(cost / 1000).toFixed(0)}K
+                  </div>
+                ))}
+                
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-primary rounded"></div>
+                  <span>Replace</span>
+                </div>
+                {selectedAsset.projected_costs.replace.map((cost, index) => (
+                  <div key={index} className="text-center font-mono">
+                    ${(cost / 1000).toFixed(0)}K
+                  </div>
+                ))}
+              </div>
+              
+              {/* Summary Cards */}
+              <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <div className="text-sm text-muted-foreground">5-Year Repair Total</div>
+                  <div className="text-2xl font-bold text-destructive">
+                    ${selectedAsset.projected_costs.repair.reduce((a: number, b: number) => a + b, 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                  <div className="text-sm text-muted-foreground">5-Year Replace Total</div>
+                  <div className="text-2xl font-bold text-primary">
+                    ${selectedAsset.projected_costs.replace.reduce((a: number, b: number) => a + b, 0).toLocaleString()}
+                  </div>
+                </div>
+              </div>
             </div>
             
             {(() => {
