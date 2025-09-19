@@ -1,0 +1,1 @@
+export { AssetInsights } from "./EnhancedAssetInsights";
