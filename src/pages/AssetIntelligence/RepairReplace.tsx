@@ -193,7 +193,7 @@ export const RepairReplace = () => {
       </Card>
 
       {/* Analysis Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Recommendation Card */}
         <Card className="lg:col-span-1">
           <CardHeader>
@@ -262,26 +262,48 @@ export const RepairReplace = () => {
         </Card>
 
         {/* Cost Comparison Chart */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
+            <div className="h-80 w-full">
               <ChartContainer config={{
-                repair: { label: "Repair", color: "hsl(var(--destructive))" },
-                replace: { label: "Replace", color: "hsl(var(--primary))" }
+                repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
+                replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
               }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={costComparisonData(selectedAsset)}>
-                    <XAxis dataKey="year" />
-                    <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`} />
+                  <BarChart 
+                    data={costComparisonData(selectedAsset)}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    barCategoryGap="20%"
+                  >
+                    <XAxis 
+                      dataKey="year" 
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
+                      axisLine={false}
+                      tickLine={false}
+                    />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}
                       formatter={(value) => [`$${Number(value).toLocaleString()}`, '']}
                     />
-                    <Bar dataKey="repair" fill="hsl(var(--destructive))" name="Repair Cost" />
-                    <Bar dataKey="replace" fill="hsl(var(--primary))" name="Replace Cost" />
+                    <Bar 
+                      dataKey="repair" 
+                      fill="hsl(var(--destructive))" 
+                      name="Repair Cost"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="replace" 
+                      fill="hsl(var(--primary))" 
+                      name="Replace Cost"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -383,7 +405,7 @@ export const RepairReplace = () => {
                         </div>
                       </div>
                       
-                      <div className="h-40">
+                      <div className="h-40 w-full">
                         <ChartContainer config={{
                           cost: { label: "Cost", color: "hsl(var(--primary))" }
                         }}>
@@ -397,8 +419,8 @@ export const RepairReplace = () => {
                                 ]}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={40}
-                                outerRadius={60}
+                                innerRadius={30}
+                                outerRadius={70}
                                 dataKey="value"
                               >
                                 {[0, 1, 2].map((index) => (
@@ -484,26 +506,22 @@ export const RepairReplace = () => {
             </TabsContent>
             
             <TabsContent value="scenario-planning" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <Button 
                   variant={selectedScenario === "repair" ? "default" : "outline"}
                   onClick={() => setSelectedScenario("repair")}
-                  className="h-20"
+                  className="h-20 flex flex-col items-center justify-center"
                 >
-                  <div className="text-center">
-                    <Wrench className="h-6 w-6 mx-auto mb-1" />
-                    <div>Repair This Quarter</div>
-                  </div>
+                  <Wrench className="h-6 w-6 mb-2" />
+                  <div>Repair This Quarter</div>
                 </Button>
                 <Button 
                   variant={selectedScenario === "replace" ? "default" : "outline"}
                   onClick={() => setSelectedScenario("replace")}
-                  className="h-20"
+                  className="h-20 flex flex-col items-center justify-center"
                 >
-                  <div className="text-center">
-                    <ArrowRight className="h-6 w-6 mx-auto mb-1" />
-                    <div>Replace Next Quarter</div>
-                  </div>
+                  <ArrowRight className="h-6 w-6 mb-2" />
+                  <div>Replace Next Quarter</div>
                 </Button>
               </div>
               
