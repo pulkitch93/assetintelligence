@@ -193,33 +193,33 @@ export const RepairReplace = () => {
       </Card>
 
       {/* Analysis Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
         {/* Recommendation Card */}
-        <Card className="lg:col-span-2 h-fit">
+        <Card className="lg:col-span-2 h-80">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
               AI Recommendation
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-full flex flex-col">
             {(() => {
               const rec = getRecommendation(selectedAsset);
               return (
-                <div className="space-y-4">
+                <div className="space-y-3 flex-1">
                   <Alert>
                     <AlertDescription>
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           {rec.action === "Replace" ? <XCircle className="h-4 w-4 text-destructive" /> : <CheckCircle className="h-4 w-4 text-green-600" />}
-                          <span className="font-semibold">{rec.action} {selectedAsset.name}</span>
+                          <span className="font-semibold text-sm">{rec.action} {selectedAsset.name}</span>
                         </div>
-                        <p className="text-sm">{rec.reason}</p>
-                        <div className="flex justify-between text-sm">
-                          <span>Potential Savings:</span>
+                        <p className="text-xs">{rec.reason}</p>
+                        <div className="flex justify-between text-xs">
+                          <span>Savings:</span>
                           <span className="font-semibold text-green-600">${rec.savings.toLocaleString()}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs">
                           <span>Timeline:</span>
                           <span className="font-semibold">{rec.urgency}</span>
                         </div>
@@ -227,24 +227,24 @@ export const RepairReplace = () => {
                     </AlertDescription>
                   </Alert>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-2 flex-1">
                     <div>
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex justify-between text-xs mb-1">
                         <span>Health Index</span>
                         <span className={healthIndexColor(selectedAsset.condition_score)}>{selectedAsset.condition_score}%</span>
                       </div>
-                      <Progress value={selectedAsset.condition_score} className="h-2" />
+                      <Progress value={selectedAsset.condition_score} className="h-1.5" />
                     </div>
                     
                     <div>
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex justify-between text-xs mb-1">
                         <span>Remaining Lifecycle</span>
                         <span>{selectedAsset.remaining_lifecycle} years</span>
                       </div>
-                      <Progress value={(selectedAsset.remaining_lifecycle / 10) * 100} className="h-2" />
+                      <Progress value={(selectedAsset.remaining_lifecycle / 10) * 100} className="h-1.5" />
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="grid grid-cols-2 gap-2 text-xs mt-auto">
                       <div>
                         <span className="text-muted-foreground">Lead Time:</span>
                         <p className="font-semibold">{selectedAsset.lead_time}</p>
@@ -262,12 +262,12 @@ export const RepairReplace = () => {
         </Card>
 
         {/* Cost Comparison Chart */}
-        <Card className="lg:col-span-3 h-fit">
+        <Card className="lg:col-span-3 h-80">
           <CardHeader>
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 w-full">
+            <div className="h-56 w-full">
               <ChartContainer config={{
                 repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
                 replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
