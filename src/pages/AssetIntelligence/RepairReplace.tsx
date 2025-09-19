@@ -266,8 +266,8 @@ export const RepairReplace = () => {
           <CardHeader className="pb-2">
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
-            <div className="h-60 w-full">
+          <CardContent className="p-6">
+            <div className="h-56 w-full">
               <ChartContainer config={{
                 repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
                 replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
@@ -275,7 +275,7 @@ export const RepairReplace = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={costComparisonData(selectedAsset)}
-                    margin={{ top: 10, right: 10, left: 50, bottom: 40 }}
+                    margin={{ top: 5, right: 5, left: 45, bottom: 25 }}
                     barCategoryGap="20%"
                   >
                     <XAxis 
@@ -284,7 +284,6 @@ export const RepairReplace = () => {
                       tickLine={false}
                       fontSize={11}
                       tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                      dy={10}
                     />
                     <YAxis 
                       tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
