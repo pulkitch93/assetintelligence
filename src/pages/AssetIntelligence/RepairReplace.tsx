@@ -263,11 +263,11 @@ export const RepairReplace = () => {
 
         {/* Cost Comparison Chart */}
         <Card className="lg:col-span-3 h-80">
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle>5-Year Cost Projection</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-56 w-full">
+          <CardContent className="pt-0">
+            <div className="h-52 w-full">
               <ChartContainer config={{
                 repair: { label: "Repair Cost", color: "hsl(var(--destructive))" },
                 replace: { label: "Replace Cost", color: "hsl(var(--primary))" }
@@ -275,21 +275,23 @@ export const RepairReplace = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={costComparisonData(selectedAsset)}
-                    margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-                    barCategoryGap="15%"
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                    barCategoryGap="20%"
                   >
                     <XAxis 
                       dataKey="year" 
                       axisLine={false}
                       tickLine={false}
-                      fontSize={12}
+                      fontSize={11}
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
                     />
                     <YAxis 
                       tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                       axisLine={false}
                       tickLine={false}
-                      fontSize={12}
-                      width={50}
+                      fontSize={11}
+                      width={45}
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
                     />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}
@@ -299,15 +301,15 @@ export const RepairReplace = () => {
                       dataKey="repair" 
                       fill="hsl(var(--destructive))" 
                       name="Repair Cost"
-                      radius={[2, 2, 0, 0]}
-                      maxBarSize={60}
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
                     />
                     <Bar 
                       dataKey="replace" 
                       fill="hsl(var(--primary))" 
                       name="Replace Cost"
-                      radius={[2, 2, 0, 0]}
-                      maxBarSize={60}
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -389,21 +391,30 @@ export const RepairReplace = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center p-4 bg-muted rounded-lg">
-                          <p className="text-sm text-muted-foreground">Total Maintenance</p>
-                          <p className="text-xl font-bold">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="text-center p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Total Maintenance</p>
+                          <p className="text-lg font-bold">
                             ${selectedAsset.maintenance_history
                               .filter(h => h.type === "Maintenance")
                               .reduce((sum, h) => sum + h.cost, 0)
                               .toLocaleString()}
                           </p>
                         </div>
-                        <div className="text-center p-4 bg-muted rounded-lg">
-                          <p className="text-sm text-muted-foreground">Total Repairs</p>
-                          <p className="text-xl font-bold">
+                        <div className="text-center p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Total Repairs</p>
+                          <p className="text-lg font-bold">
                             ${selectedAsset.maintenance_history
                               .filter(h => h.type === "Repair")
+                              .reduce((sum, h) => sum + h.cost, 0)
+                              .toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="text-center p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Total Capital</p>
+                          <p className="text-lg font-bold">
+                            ${selectedAsset.maintenance_history
+                              .filter(h => h.type === "Capital")
                               .reduce((sum, h) => sum + h.cost, 0)
                               .toLocaleString()}
                           </p>
