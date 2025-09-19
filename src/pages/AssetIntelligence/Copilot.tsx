@@ -145,9 +145,9 @@ const quickActionsByRole = {
     { icon: Settings, label: "Cost optimization", query: "Which 5 assets should we replace next year?" }
   ],
   'Planner': [
-    { icon: Calendar, label: "Schedule optimization", query: "When should I schedule downtime for [ASSET]?" },
+    { icon: BarChart3, label: "Schedule optimization", query: "When should I schedule downtime for [ASSET]?" },
     { icon: BarChart3, label: "Workload analysis", query: "Show technician availability and workload" },
-    { icon: DollarSign, label: "Budget planning", query: "Project maintenance costs for Q4" },
+    { icon: BarChart3, label: "Budget planning", query: "Project maintenance costs for Q4" },
     { icon: AlertTriangle, label: "Risk analysis", query: "Show critical assets requiring attention" }
   ]
 };

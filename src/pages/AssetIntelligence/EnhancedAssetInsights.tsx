@@ -371,8 +371,8 @@ export const AssetInsights = () => {
 
   const getRiskColor = (riskScore: number) => {
     if (riskScore > 0.7) return "destructive";
-    if (riskScore > 0.4) return "warning";
-    return "success";
+    if (riskScore > 0.4) return "secondary";
+    return "outline";
   };
 
   return (
@@ -552,7 +552,7 @@ export const AssetInsights = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="flex items-center space-x-2">
-                            <div className={`text-lg font-bold ${getRiskColor(selectedAssetType.detailed_risk_score) === 'destructive' ? 'text-destructive' : getRiskColor(selectedAssetType.detailed_risk_score) === 'warning' ? 'text-warning' : 'text-success'}`}>
+                            <div className={`text-lg font-bold ${getRiskColor(selectedAssetType.detailed_risk_score) === 'destructive' ? 'text-destructive' : getRiskColor(selectedAssetType.detailed_risk_score) === 'secondary' ? 'text-muted-foreground' : 'text-foreground'}`}>
                               {Math.round(selectedAssetType.detailed_risk_score * 100)}%
                             </div>
                             <Badge variant={getRiskColor(selectedAssetType.detailed_risk_score)}>
