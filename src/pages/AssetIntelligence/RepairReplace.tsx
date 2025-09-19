@@ -313,25 +313,27 @@ export const RepairReplace = () => {
                   </div>
                 </div>
               </div>
-            
-            {(() => {
-              const breakEven = calculateBreakEven(selectedAsset);
-              return breakEven ? (
-                <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
-                  <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <AlertDescription className="text-blue-800 dark:text-blue-200 font-medium">
-                    💡 <strong>Key Insight:</strong> Break-even point at Year {breakEven} - Replacement becomes more cost-effective
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
-                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <AlertDescription className="text-green-800 dark:text-green-200 font-medium">
-                    💡 <strong>Key Insight:</strong> Repair remains cost-effective throughout the 5-year period
-                  </AlertDescription>
-                </Alert>
-              );
-            })()}
+              
+              {/* Key Insight Box */}
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950 dark:border-blue-800">
+                <div className="flex items-center gap-2">
+                  <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                  <div className="text-sm">
+                    {(() => {
+                      const breakEven = calculateBreakEven(selectedAsset);
+                      return breakEven ? (
+                        <span className="text-blue-800 dark:text-blue-200">
+                          <strong>💡 Key Insight:</strong> Break-even point at Year {breakEven} - Replacement becomes more cost-effective
+                        </span>
+                      ) : (
+                        <span className="text-green-800 dark:text-green-200">
+                          <strong>💡 Key Insight:</strong> Repair remains cost-effective throughout the 5-year period
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
