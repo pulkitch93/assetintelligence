@@ -4,7 +4,14 @@ const Footer = () => {
       <div className="container mx-auto px-4 text-center">
         <p className="text-sm text-muted-foreground">
           Designed & Developed by{" "}
-          <span className="font-semibold text-foreground">Pulkit Chuadhary</span>
+          <a 
+            href="https://www.linkedin.com/in/pulkit-chaudhary" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="font-semibold text-foreground hover:text-primary transition-colors underline"
+          >
+            Pulkit Chaudhary
+          </a>
         </p>
       </div>
     </footer>
