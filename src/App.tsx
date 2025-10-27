@@ -11,6 +11,7 @@ import { RepairReplace } from "./pages/AssetIntelligence/RepairReplace";
 import { Benchmarking } from "./pages/AssetIntelligence/Benchmarking";
 import { AssetInsights } from "./pages/AssetIntelligence/AssetInsights";
 import { Copilot } from "./pages/AssetIntelligence/Copilot";
+import Footer from "./components/Layout/Footer";
 
 const queryClient = new QueryClient();
 
@@ -20,16 +21,21 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/asset-intelligence/predictive-risk" element={<PrescriptiveMaintenance />} />
-          <Route path="/asset-intelligence/repair-replace" element={<RepairReplace />} />
-          <Route path="/asset-intelligence/benchmarking" element={<Benchmarking />} />
-          <Route path="/asset-intelligence/asset-library" element={<AssetInsights />} />
-          <Route path="/asset-intelligence/copilot" element={<Copilot />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="flex flex-col min-h-screen">
+          <div className="flex-1">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/asset-intelligence/predictive-risk" element={<PrescriptiveMaintenance />} />
+              <Route path="/asset-intelligence/repair-replace" element={<RepairReplace />} />
+              <Route path="/asset-intelligence/benchmarking" element={<Benchmarking />} />
+              <Route path="/asset-intelligence/asset-library" element={<AssetInsights />} />
+              <Route path="/asset-intelligence/copilot" element={<Copilot />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
