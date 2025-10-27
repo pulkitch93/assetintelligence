@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MaintainX Asset Intelligence Design System 
+/* Asset Intelligence Design System 
 All colors MUST be HSL for proper theming.
 */
 
 @layer base {
   :root {
-    /* MaintainX Brand Colors */
+    /* Brand Colors */
     --background: 0 0% 100%;
     --foreground: 0 0% 20%;
 
@@ -18,7 +18,7 @@ All colors MUST be HSL for proper theming.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
-    /* MaintainX Primary - #246CFF */
+    /* Primary - #246CFF */
     --primary: 221 100% 57%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 221 100% 52%;

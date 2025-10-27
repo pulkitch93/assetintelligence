@@ -18,7 +18,7 @@ const Index = () => {
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Advanced AI/ML-driven insights for predictive maintenance, benchmarking, 
-              and intelligent asset management. Built for MaintainX.
+              and intelligent asset management.
             </p>
             <Button asChild size="lg" className="mr-4">
               <Link to="/asset-intelligence/predictive-risk">
