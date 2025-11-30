@@ -25,11 +25,13 @@ const App = () => (
           <div className="flex-1">
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/asset-intelligence/predictive-risk" element={<PrescriptiveMaintenance />} />
-              <Route path="/asset-intelligence/repair-replace" element={<RepairReplace />} />
-              <Route path="/asset-intelligence/benchmarking" element={<Benchmarking />} />
-              <Route path="/asset-intelligence/asset-library" element={<AssetInsights />} />
-              <Route path="/asset-intelligence/copilot" element={<Copilot />} />
+              <Route path="/asset-intelligence" element={<AssetIntelligenceLayout />}>
+                <Route path="predictive-risk" element={<PrescriptiveMaintenance />} />
+                <Route path="repair-replace" element={<RepairReplace />} />
+                <Route path="benchmarking" element={<Benchmarking />} />
+                <Route path="asset-library" element={<AssetInsights />} />
+                <Route path="copilot" element={<Copilot />} />
+              </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
