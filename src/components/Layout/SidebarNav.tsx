@@ -16,53 +16,77 @@ interface NavigationItem {
   description: string;
 }
 
+interface NavigationSection {
+  section: string;
+  items: NavigationItem[];
+}
+
 interface SidebarNavProps {
-  navigation: NavigationItem[];
+  navigation: NavigationSection[];
   collapsed: boolean;
 }
 
 export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
   return (
-    <nav className="flex flex-col p-4 space-y-2">
+    <nav className="flex flex-col p-4 space-y-6">
       <TooltipProvider>
-        {navigation.map((item) => (
-          <Tooltip key={item.name} delayDuration={0}>
-            <TooltipTrigger asChild>
-              <Button
-                asChild
-                variant="ghost"
-                className={cn(
-                  "h-auto p-0 w-full hover:bg-transparent",
-                  collapsed && "justify-center"
-                )}
-              >
-                <NavLink
-                  to={item.href}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center w-full px-3 py-2 space-x-3 rounded-md text-sm font-medium transition-colors text-foreground",
-                      isActive && "bg-primary text-primary-foreground hover:bg-primary/90",
-                      !isActive && "hover:bg-accent hover:text-accent-foreground",
-                      collapsed && "space-x-0 justify-center px-2"
-                    )
-                  }
-                >
-                  <item.icon size={20} className="flex-shrink-0" />
-                  {!collapsed && (
-                    <span className="text-sm font-medium">{item.name}</span>
-                  )}
-                </NavLink>
-              </Button>
-            </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right" className="ml-2">
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
-                </div>
-              </TooltipContent>
+        {navigation.map((section) => (
+          <div key={section.section} className="space-y-2">
+            {!collapsed && (
+              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                {section.section}
+              </h3>
             )}
-          </Tooltip>
+            <div className="space-y-1">
+              {section.items.map((item) => (
+                <Tooltip key={item.name} delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className={cn(
+                        "h-auto p-0 w-full hover:bg-transparent",
+                        collapsed && "justify-center"
+                      )}
+                    >
+                      <NavLink
+                        to={item.href}
+                        className={({ isActive }) =>
+                          cn(
+                            "flex items-center w-full px-3 py-2.5 space-x-3 rounded-lg text-sm font-medium transition-all duration-200",
+                            "hover:bg-accent/50",
+                            isActive 
+                              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 border-l-4 border-primary-foreground/20" 
+                              : "text-foreground",
+                            collapsed && "space-x-0 justify-center px-2 border-l-0"
+                          )
+                        }
+                      >
+                        <item.icon 
+                          size={20} 
+                          className={cn(
+                            "flex-shrink-0 transition-transform duration-200",
+                            "group-hover:scale-110"
+                          )} 
+                        />
+                        {!collapsed && (
+                          <span className="text-sm font-medium">{item.name}</span>
+                        )}
+                      </NavLink>
+                    </Button>
+                  </TooltipTrigger>
+                  {collapsed && (
+                    <TooltipContent side="right" className="ml-2">
+                      <div>
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">{item.description}</p>
+                      </div>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              ))}
+            </div>
+          </div>
         ))}
       </TooltipProvider>
     </nav>

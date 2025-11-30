@@ -15,34 +15,44 @@ import { SidebarNav } from "./SidebarNav";
 
 const navigation = [
   {
-    name: "Prescriptive Maintenance",
-    href: "/asset-intelligence/predictive-risk",
-    icon: AlertTriangle,
-    description: "AI-powered action plans & scheduling"
+    section: "Core Features",
+    items: [
+      {
+        name: "Prescriptive Maintenance",
+        href: "/asset-intelligence/predictive-risk",
+        icon: AlertTriangle,
+        description: "AI-powered action plans & scheduling"
+      },
+      {
+        name: "Repair vs Replace",
+        href: "/asset-intelligence/repair-replace",
+        icon: TrendingUp,
+        description: "Prescriptive maintenance planning"
+      },
+      {
+        name: "Benchmarking",
+        href: "/asset-intelligence/benchmarking",
+        icon: BarChart3,
+        description: "Performance comparison & metrics"
+      }
+    ]
   },
   {
-    name: "Repair vs Replace",
-    href: "/asset-intelligence/repair-replace",
-    icon: TrendingUp,
-    description: "Prescriptive maintenance planning"
-  },
-  {
-    name: "Benchmarking",
-    href: "/asset-intelligence/benchmarking",
-    icon: BarChart3,
-    description: "Performance comparison & metrics"
-  },
-  {
-    name: "Asset Insights",
-    href: "/asset-intelligence/asset-library",
-    icon: BookOpen,
-    description: "Cost comparisons & lifecycle analysis"
-  },
-  {
-    name: "AI Copilot",
-    href: "/asset-intelligence/copilot",
-    icon: Bot,
-    description: "GenAI assistant for technicians"
+    section: "Insights & Tools",
+    items: [
+      {
+        name: "Asset Insights",
+        href: "/asset-intelligence/asset-library",
+        icon: BookOpen,
+        description: "Cost comparisons & lifecycle analysis"
+      },
+      {
+        name: "AI Copilot",
+        href: "/asset-intelligence/copilot",
+        icon: Bot,
+        description: "GenAI assistant for technicians"
+      }
+    ]
   }
 ];
 
@@ -50,7 +60,9 @@ export const AssetIntelligenceLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
 
-  const currentPage = navigation.find(item => location.pathname === item.href);
+  const currentPage = navigation
+    .flatMap(section => section.items)
+    .find(item => location.pathname === item.href);
 
   return (
     <div className="min-h-screen bg-background">
