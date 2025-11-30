@@ -73,12 +73,7 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                             </div>
                             
                             {!collapsed && (
-                              <span
-                                className={cn(
-                                  "text-sm font-medium truncate",
-                                  isActive ? "text-primary-foreground" : "text-foreground"
-                                )}
-                              >
+                              <span className="text-sm font-medium truncate text-foreground">
                                 {item.name}
                               </span>
                             )}
