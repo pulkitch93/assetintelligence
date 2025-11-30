@@ -52,7 +52,7 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                           collapsed ? "justify-center" : "justify-start",
                           isActive
                             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                            : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                            : "bg-accent/50 text-foreground hover:bg-accent hover:text-accent-foreground"
                         )
                       }
                     >
