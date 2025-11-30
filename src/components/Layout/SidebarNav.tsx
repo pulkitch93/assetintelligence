@@ -51,8 +51,8 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                           "hover:scale-[1.02] active:scale-[0.98]",
                           collapsed ? "justify-center" : "justify-start",
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                            : "bg-accent/50 text-foreground hover:bg-accent hover:text-accent-foreground"
+                            ? "bg-primary shadow-lg shadow-primary/25"
+                            : "bg-accent/50 hover:bg-accent"
                         )
                       }
                     >
@@ -62,7 +62,7 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent animate-fade-in" />
                           )}
                           
-                          <div className="relative z-10 flex items-center gap-3">
+                          <div className="relative z-10 flex items-center gap-3 text-foreground">
                             <div
                               className={cn(
                                 "flex-shrink-0 transition-transform duration-200",
