@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -28,55 +27,70 @@ interface SidebarNavProps {
 
 export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
   return (
-    <nav className="flex flex-col p-4 space-y-6">
-      <TooltipProvider>
+    <nav className="flex flex-col py-6 px-3 space-y-8">
+      <TooltipProvider delayDuration={0}>
         {navigation.map((section) => (
-          <div key={section.section} className="space-y-2">
+          <div key={section.section} className="space-y-3">
             {!collapsed && (
-              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                {section.section}
-              </h3>
+              <div className="px-3 mb-4">
+                <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {section.section}
+                </h3>
+              </div>
             )}
-            <div className="space-y-1">
+            
+            <div className="space-y-1.5">
               {section.items.map((item) => (
-                <Tooltip key={item.name} delayDuration={0}>
+                <Tooltip key={item.name}>
                   <TooltipTrigger asChild>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      className={cn(
-                        "h-auto p-0 w-full hover:bg-transparent",
-                        collapsed && "justify-center"
-                      )}
+                    <NavLink
+                      to={item.href}
+                      className={({ isActive }) =>
+                        cn(
+                          "group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden",
+                          "hover:scale-[1.02] active:scale-[0.98]",
+                          collapsed ? "justify-center" : "justify-start",
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                        )
+                      }
                     >
-                      <NavLink
-                        to={item.href}
-                        className={({ isActive }) =>
-                          cn(
-                            "flex items-center w-full px-3 py-2.5 space-x-3 rounded-lg text-sm font-medium transition-all duration-200 text-foreground",
-                            isActive
-                              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-                              : "hover:bg-accent/50 hover:text-accent-foreground",
-                            collapsed && "space-x-0 justify-center px-2"
-                          )
-                        }
-                      >
-                        <item.icon
-                          size={20}
-                          className="flex-shrink-0"
-                        />
-                        {!collapsed && (
-                          <span>{item.name}</span>
-                        )}
-                      </NavLink>
-                    </Button>
+                      {({ isActive }) => (
+                        <>
+                          {isActive && !collapsed && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent animate-fade-in" />
+                          )}
+                          
+                          <div className="relative z-10 flex items-center gap-3">
+                            <div className={cn(
+                              "flex-shrink-0 transition-transform duration-200",
+                              "group-hover:rotate-12 group-hover:scale-110"
+                            )}>
+                              <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                            </div>
+                            
+                            {!collapsed && (
+                              <span className="text-sm font-medium truncate">
+                                {item.name}
+                              </span>
+                            )}
+                          </div>
+                          
+                          {isActive && (
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary-foreground/40 rounded-l-full" />
+                          )}
+                        </>
+                      )}
+                    </NavLink>
                   </TooltipTrigger>
+                  
                   {collapsed && (
-                    <TooltipContent side="right" className="ml-2">
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">{item.description}</p>
-                      </div>
+                    <TooltipContent side="right" className="flex flex-col gap-1 max-w-[250px]">
+                      <p className="font-semibold text-sm">{item.name}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
                     </TooltipContent>
                   )}
                 </Tooltip>
