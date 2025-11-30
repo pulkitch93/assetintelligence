@@ -98,7 +98,7 @@ export const AssetIntelligenceLayout = () => {
         {/* Sidebar */}
         <aside
           className={cn(
-            "border-r border-border bg-card transition-all duration-300 ease-in-out",
+            "border-r border-border bg-muted/30 transition-all duration-300 ease-in-out",
             sidebarOpen ? "w-64" : "w-16"
           )}
         >
