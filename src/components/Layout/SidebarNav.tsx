@@ -63,15 +63,22 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                           )}
                           
                           <div className="relative z-10 flex items-center gap-3">
-                            <div className={cn(
-                              "flex-shrink-0 transition-transform duration-200",
-                              "group-hover:rotate-12 group-hover:scale-110"
-                            )}>
+                            <div
+                              className={cn(
+                                "flex-shrink-0 transition-transform duration-200",
+                                "group-hover:rotate-12 group-hover:scale-110"
+                              )}
+                            >
                               <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                             </div>
                             
                             {!collapsed && (
-                              <span className="text-sm font-medium truncate">
+                              <span
+                                className={cn(
+                                  "text-sm font-medium truncate",
+                                  isActive ? "text-primary-foreground" : "text-foreground"
+                                )}
+                              >
                                 {item.name}
                               </span>
                             )}
