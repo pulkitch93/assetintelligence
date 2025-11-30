@@ -32,17 +32,19 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                 asChild
                 variant="ghost"
                 className={cn(
-                  "justify-start h-10 px-3",
-                  collapsed && "px-2 justify-center"
+                  "h-auto p-0 w-full hover:bg-transparent",
+                  collapsed && "justify-center"
                 )}
               >
                 <NavLink
                   to={item.href}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center space-x-3 rounded-md px-3 py-2 text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
-                      isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-                      collapsed && "space-x-0 justify-center"
+                      "flex items-center w-full px-3 py-2 space-x-3 rounded-md text-sm font-medium transition-colors",
+                      isActive 
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      collapsed && "space-x-0 justify-center px-2"
                     )
                   }
                 >
