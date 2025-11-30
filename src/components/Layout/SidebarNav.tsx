@@ -53,18 +53,17 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                         to={item.href}
                         className={({ isActive }) =>
                           cn(
-                            "flex items-center w-full px-3 py-2.5 space-x-3 rounded-lg text-sm font-medium transition-all duration-200",
-                            "hover:bg-accent/50",
-                            isActive 
-                              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90" 
-                              : "text-card-foreground hover:text-accent-foreground",
+                            "flex items-center w-full px-3 py-2.5 space-x-3 rounded-lg text-sm font-medium transition-all duration-200 text-foreground",
+                            isActive
+                              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                              : "hover:bg-accent/50 hover:text-accent-foreground",
                             collapsed && "space-x-0 justify-center px-2"
                           )
                         }
                       >
-                        <item.icon 
-                          size={20} 
-                          className="flex-shrink-0" 
+                        <item.icon
+                          size={20}
+                          className="flex-shrink-0"
                         />
                         {!collapsed && (
                           <span>{item.name}</span>
