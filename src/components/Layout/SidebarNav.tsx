@@ -43,7 +43,7 @@ export const SidebarNav = ({ navigation, collapsed }: SidebarNavProps) => {
                       "flex items-center w-full px-3 py-2 space-x-3 rounded-md text-sm font-medium transition-colors",
                       isActive 
                         ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                        : "text-foreground hover:bg-accent hover:text-accent-foreground",
                       collapsed && "space-x-0 justify-center px-2"
                     )
                   }
