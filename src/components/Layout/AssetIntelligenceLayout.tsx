@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { 
-  AlertTriangle, 
+  Wrench, 
   BarChart3, 
   BookOpen, 
   Bot, 
@@ -20,7 +20,7 @@ const navigation = [
       {
         name: "Prescriptive Maintenance",
         href: "/asset-intelligence/predictive-risk",
-        icon: AlertTriangle,
+        icon: Wrench,
         description: "AI-powered action plans & scheduling"
       },
       {
