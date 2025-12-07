@@ -1,6 +1,6 @@
 # API Documentation
 
-This document outlines the database schemas, Edge Function endpoints, and integration patterns for the Asset Intelligence Platform backend.
+This document outlines the database schemas, Edge Function endpoints, utility functions, storage modules, and integration patterns for the Asset Intelligence Platform backend.
 
 ---
 
@@ -11,6 +11,9 @@ This document outlines the database schemas, Edge Function endpoints, and integr
 3. [Authentication](#authentication)
 4. [Row Level Security](#row-level-security)
 5. [API Endpoints](#api-endpoints)
+6. [Storage Modules](#storage-modules)
+7. [Utility Functions](#utility-functions)
+8. [Frontend Components API](#frontend-components-api)
 
 ---
 
@@ -738,6 +741,397 @@ USING (
 
 ---
 
+## Storage Modules
+
+### File Storage Buckets
+
+#### `attachments`
+Maintenance history attachments and documents.
+
+```sql
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('attachments', 'attachments', false);
+
+-- RLS Policy: Users can upload to their organization folder
+CREATE POLICY "Users can upload attachments"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'attachments'
+  AND (storage.foldername(name))[1] = public.get_user_organization_id(auth.uid())::text
+);
+
+-- RLS Policy: Users can view their organization's attachments
+CREATE POLICY "Users can view attachments"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (
+  bucket_id = 'attachments'
+  AND (storage.foldername(name))[1] = public.get_user_organization_id(auth.uid())::text
+);
+```
+
+#### `exports`
+Generated export files (CSV, Excel, PDF).
+
+```sql
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('exports', 'exports', false);
+
+-- Files auto-expire after 24 hours
+```
+
+#### `avatars`
+User profile pictures.
+
+```sql
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('avatars', 'avatars', true);
+
+CREATE POLICY "Users can upload own avatar"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'avatars'
+  AND (storage.foldername(name))[1] = auth.uid()::text
+);
+```
+
+### Storage Methods
+
+#### Upload File
+```typescript
+const uploadFile = async (
+  bucket: string,
+  path: string,
+  file: File
+): Promise<{ url: string } | { error: Error }> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if (error) return { error };
+
+  const { data: { publicUrl } } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(data.path);
+
+  return { url: publicUrl };
+};
+
+// Usage
+const result = await uploadFile(
+  'attachments',
+  `${organizationId}/${assetId}/${file.name}`,
+  file
+);
+```
+
+#### Download File
+```typescript
+const downloadFile = async (
+  bucket: string,
+  path: string
+): Promise<Blob | null> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .download(path);
+
+  if (error) {
+    console.error('Download error:', error);
+    return null;
+  }
+
+  return data;
+};
+```
+
+#### Delete File
+```typescript
+const deleteFile = async (
+  bucket: string,
+  paths: string[]
+): Promise<boolean> => {
+  const { error } = await supabase.storage
+    .from(bucket)
+    .remove(paths);
+
+  return !error;
+};
+```
+
+#### List Files
+```typescript
+const listFiles = async (
+  bucket: string,
+  folder: string
+): Promise<FileObject[]> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .list(folder, {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'desc' }
+    });
+
+  return data || [];
+};
+```
+
+#### Get Signed URL (Private Files)
+```typescript
+const getSignedUrl = async (
+  bucket: string,
+  path: string,
+  expiresIn: number = 3600
+): Promise<string | null> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, expiresIn);
+
+  return data?.signedUrl || null;
+};
+```
+
+---
+
+## Utility Functions
+
+### `cn` - Class Name Merger
+Combines Tailwind CSS classes with proper precedence handling.
+
+**Location:** `src/lib/utils.ts`
+
+```typescript
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// Usage Examples
+cn("px-4 py-2", "bg-primary");
+// => "px-4 py-2 bg-primary"
+
+cn("px-4", "px-8");
+// => "px-8" (later class wins)
+
+cn("text-red-500", isError && "text-destructive");
+// => "text-destructive" (conditional)
+
+cn(
+  "base-class",
+  variant === "primary" && "bg-primary",
+  variant === "secondary" && "bg-secondary"
+);
+// => "base-class bg-primary" or "base-class bg-secondary"
+```
+
+### Currency Formatter
+Format monetary values consistently.
+
+```typescript
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'USD',
+  minimumFractionDigits: number = 0
+): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits,
+  }).format(amount);
+};
+
+// Usage
+formatCurrency(45000);        // => "$45,000"
+formatCurrency(1234.56, 'USD', 2); // => "$1,234.56"
+```
+
+### Date Formatter
+Format dates for display.
+
+```typescript
+export const formatDate = (
+  dateString: string,
+  options?: Intl.DateTimeFormatOptions
+): string => {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  };
+  
+  return new Date(dateString).toLocaleDateString(
+    'en-US',
+    options || defaultOptions
+  );
+};
+
+// Usage
+formatDate('2024-03-15');  // => "Mar 15, 2024"
+```
+
+### Risk Score Helpers
+
+```typescript
+export const getRiskLevel = (score: number): {
+  level: string;
+  color: string;
+  variant: 'destructive' | 'secondary' | 'outline';
+} => {
+  if (score >= 0.7) {
+    return { level: 'High', color: 'text-destructive', variant: 'destructive' };
+  }
+  if (score >= 0.4) {
+    return { level: 'Medium', color: 'text-warning', variant: 'secondary' };
+  }
+  return { level: 'Low', color: 'text-success', variant: 'outline' };
+};
+
+// Usage
+const { level, color, variant } = getRiskLevel(0.78);
+// => { level: 'High', color: 'text-destructive', variant: 'destructive' }
+```
+
+### Priority Color Mapper
+
+```typescript
+export const getPriorityColor = (
+  priority: string
+): 'destructive' | 'default' | 'secondary' | 'outline' => {
+  const colors: Record<string, 'destructive' | 'default' | 'secondary' | 'outline'> = {
+    critical: 'destructive',
+    high: 'default',
+    medium: 'secondary',
+    low: 'outline'
+  };
+  return colors[priority.toLowerCase()] || 'outline';
+};
+```
+
+### Percentage Calculator
+
+```typescript
+export const calculatePercentage = (
+  value: number,
+  baseline: number,
+  lowerIsBetter: boolean = false
+): { percentage: number; status: 'above' | 'below' | 'at' } => {
+  const diff = ((value - baseline) / baseline) * 100;
+  
+  let status: 'above' | 'below' | 'at';
+  if (Math.abs(diff) < 5) {
+    status = 'at';
+  } else if (lowerIsBetter) {
+    status = diff < 0 ? 'above' : 'below';
+  } else {
+    status = diff > 0 ? 'above' : 'below';
+  }
+  
+  return { percentage: Math.abs(diff), status };
+};
+```
+
+---
+
+## Frontend Components API
+
+### FilterBar Component
+
+**Location:** `src/components/UI/FilterBar.tsx`
+
+#### Props Interface
+```typescript
+interface FilterOption {
+  key: string;           // Unique identifier for the filter
+  label: string;         // Display label
+  type: 'select' | 'range' | 'text';
+  options?: string[];    // For select type
+  defaultValue?: string;
+}
+
+interface FilterBarProps {
+  filters: FilterOption[];
+  onFiltersChange: (filters: Record<string, any>) => void;
+  searchPlaceholder?: string;
+}
+```
+
+#### Usage Example
+```tsx
+const filterOptions: FilterOption[] = [
+  {
+    key: "site",
+    label: "Site",
+    type: "select",
+    options: ["Site A", "Site B", "Site C"]
+  },
+  {
+    key: "criticality",
+    label: "Criticality",
+    type: "select",
+    options: ["Critical", "High", "Medium", "Low"]
+  }
+];
+
+<FilterBar
+  filters={filterOptions}
+  onFiltersChange={(filters) => setActiveFilters(filters)}
+  searchPlaceholder="Search assets..."
+/>
+```
+
+#### Methods
+| Method | Description |
+|--------|-------------|
+| `handleFilterChange(key, value)` | Updates a single filter value |
+| `removeFilter(key)` | Removes a specific filter |
+| `clearAllFilters()` | Resets all filters to empty state |
+| `handleSearchChange(value)` | Updates search term |
+
+---
+
+### ExportButton Component
+
+**Location:** `src/components/UI/ExportButton.tsx`
+
+#### Props Interface
+```typescript
+type ExportFormat = 'csv' | 'excel' | 'pdf' | 'png';
+
+interface ExportButtonProps {
+  data: any[];           // Data to export
+  filename: string;      // Base filename (without extension)
+  formats?: ExportFormat[]; // Available export formats
+  className?: string;    // Additional CSS classes
+}
+```
+
+#### Usage Example
+```tsx
+<ExportButton
+  data={filteredAssets}
+  filename="asset-report"
+  formats={['csv', 'excel', 'pdf']}
+/>
+```
+
+#### Export Methods
+| Method | Description |
+|--------|-------------|
+| `exportToCSV(data, filename)` | Converts data to CSV and triggers download |
+| `exportToExcel(data, filename)` | Generates Excel file (requires xlsx library) |
+| `exportToPDF(data, filename)` | Generates PDF report (requires jspdf library) |
+| `exportToPNG(filename)` | Captures current view as PNG image |
+| `downloadFile(content, filename, contentType)` | Generic file download helper |
+
+---
+
 ## Environment Variables
 
 Required secrets for Edge Functions:
@@ -757,3 +1151,20 @@ Required secrets for Edge Functions:
 | Risk Calculation | 100 requests/minute |
 | Export | 10 requests/minute |
 | General | 1000 requests/minute |
+
+---
+
+## Error Codes
+
+| Code | Description |
+|------|-------------|
+| `AUTH_001` | Invalid or expired authentication token |
+| `AUTH_002` | Insufficient permissions for operation |
+| `ASSET_001` | Asset not found |
+| `ASSET_002` | Invalid asset data |
+| `MAINT_001` | Maintenance action not found |
+| `MAINT_002` | Cannot modify completed action |
+| `AI_001` | AI service unavailable |
+| `AI_002` | Token limit exceeded |
+| `EXPORT_001` | Export generation failed |
+| `EXPORT_002` | File too large for export |
