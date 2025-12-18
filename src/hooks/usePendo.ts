@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -12,7 +13,14 @@ declare global {
         visitor: { id: string; email?: string; role?: string };
         account: { id: string };
       }) => void;
+      track: (eventName: string, metadata?: Record<string, unknown>) => void;
     };
+  }
+}
+
+export function trackPendoEvent(eventName: string, metadata?: Record<string, unknown>) {
+  if (typeof window.pendo !== 'undefined' && window.pendo.track) {
+    window.pendo.track(eventName, metadata);
   }
 }
 
@@ -23,7 +31,6 @@ export function usePendo() {
     if (typeof window.pendo === 'undefined') return;
 
     if (user) {
-      // Identify authenticated user
       window.pendo.initialize({
         visitor: {
           id: user.id,
@@ -35,7 +42,6 @@ export function usePendo() {
         },
       });
     } else {
-      // Anonymous visitor
       window.pendo.initialize({
         visitor: {
           id: `anonymous-${crypto.randomUUID()}`,
@@ -46,4 +52,17 @@ export function usePendo() {
       });
     }
   }, [user]);
+}
+
+export function usePendoPageTracking() {
+  const location = useLocation();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    trackPendoEvent('page_view', {
+      path: location.pathname,
+      userId: user?.id || 'anonymous',
+      timestamp: new Date().toISOString(),
+    });
+  }, [location.pathname, user?.id]);
 }

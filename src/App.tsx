@@ -16,12 +16,17 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Auth from "./pages/Auth";
 import Unauthorized from "./pages/Unauthorized";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
-import { usePendo } from "./hooks/usePendo";
+import { usePendo, usePendoPageTracking } from "./hooks/usePendo";
 
 const queryClient = new QueryClient();
 
 function PendoTracker() {
   usePendo();
+  return null;
+}
+
+function PageTracker() {
+  usePendoPageTracking();
   return null;
 }
 
@@ -33,6 +38,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <PageTracker />
           <div className="flex flex-col min-h-screen">
             <div className="flex-1">
               <Routes>
