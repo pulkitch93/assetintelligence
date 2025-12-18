@@ -16,13 +16,20 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Auth from "./pages/Auth";
 import Unauthorized from "./pages/Unauthorized";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
+import { usePendo } from "./hooks/usePendo";
 
 const queryClient = new QueryClient();
+
+function PendoTracker() {
+  usePendo();
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
+        <PendoTracker />
         <Toaster />
         <Sonner />
         <BrowserRouter>
