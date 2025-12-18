@@ -23,8 +23,18 @@
   <meta name="twitter:title" content="Asset Intelligence - AI-Powered Maintenance Platform">
   <meta property="og:description" content="Advanced AI/ML-driven insights for predictive maintenance, benchmarking, and intelligent asset management.">
   <meta name="twitter:description" content="Advanced AI/ML-driven insights for predictive maintenance, benchmarking, and intelligent asset management.">
+
+    <!-- Content Security Policy for Pendo -->
+    <meta http-equiv="Content-Security-Policy" content="
+      script-src 'self' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io 'unsafe-eval' 'unsafe-inline' data:;
+      style-src 'self' 'unsafe-inline' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io;
+      img-src 'self' data: cdn.pendo.io app.pendo.io content-6697256107573248.static.pendo.io;
+      connect-src 'self' app.pendo.io content-6697256107573248.static.pendo.io;
+      frame-src 'self' app.pendo.io;
+      font-src 'self' cdn.pendo.io;
+    ">
   
-  <!-- Pendo Analytics - Script loader only, initialization happens in React -->
+    <!-- Pendo Analytics - Script loader only, initialization happens in React -->
   <script>
     (function(apiKey){
       (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];
