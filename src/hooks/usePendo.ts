@@ -6,11 +6,11 @@ declare global {
   interface Window {
     pendo: {
       initialize: (options: {
-        visitor: { id: string; email?: string; role?: string };
+        visitor: { id: string; email?: string; full_name?: string; role?: string };
         account: { id: string };
       }) => void;
       identify: (options: {
-        visitor: { id: string; email?: string; role?: string };
+        visitor: { id: string; email?: string; full_name?: string; role?: string };
         account: { id: string };
       }) => void;
       track: (eventName: string, metadata?: Record<string, unknown>) => void;
@@ -35,6 +35,7 @@ export function usePendo() {
         visitor: {
           id: user.id,
           email: user.email,
+          full_name: user.username,
           role: user.role,
         },
         account: {
