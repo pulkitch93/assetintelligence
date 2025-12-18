@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { trackPendoEvent } from '@/hooks/usePendo';
 
 export type UserRole = 'ADMIN' | 'MANAGER' | 'USER';
 
@@ -61,12 +62,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const foundUser = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
     if (!foundUser) {
+      trackPendoEvent('login_failed', { email, reason: 'invalid_credentials' });
       return { success: false, error: 'Invalid email or password' };
     }
 
     const { password: _, ...userWithoutPassword } = foundUser;
     setUser(userWithoutPassword);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userWithoutPassword));
+    
+    trackPendoEvent('login_success', { 
+      userId: userWithoutPassword.id, 
+      email: userWithoutPassword.email, 
+      role: userWithoutPassword.role 
+    });
+    
     return { success: true };
   };
 
@@ -108,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    trackPendoEvent('logout', { userId: user?.id, email: user?.email });
     setUser(null);
     localStorage.removeItem(STORAGE_KEY);
   };
