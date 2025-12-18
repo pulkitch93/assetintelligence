@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SidebarNav } from "./SidebarNav";
+import { UserMenu } from "@/components/Auth/UserMenu";
 
 const navigation = [
   {
@@ -91,6 +92,10 @@ export const AssetIntelligenceLayout = () => {
               <span className="text-sm">{currentPage.description}</span>
             </div>
           )}
+
+          <div className="ml-auto">
+            <UserMenu />
+          </div>
         </div>
       </header>
 
