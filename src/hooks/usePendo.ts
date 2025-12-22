@@ -30,27 +30,42 @@ export function usePendo() {
   useEffect(() => {
     if (typeof window.pendo === 'undefined') return;
 
-    if (user) {
-      window.pendo.initialize({
-        visitor: {
+    // Keep an anonymous visitor id stable across reloads so Preview/testing can reliably target guides.
+    const anonKey = 'pendo_anon_visitor_id';
+    const getAnonId = () => {
+      const existing = localStorage.getItem(anonKey);
+      if (existing) return existing;
+      const created = `anonymous-${crypto.randomUUID()}`;
+      localStorage.setItem(anonKey, created);
+      return created;
+    };
+
+    const visitor = user
+      ? {
           id: user.id,
           email: user.email,
           full_name: user.username,
           role: user.role,
-        },
-        account: {
-          id: 'asset-intelligence',
-        },
-      });
-    } else {
-      window.pendo.initialize({
-        visitor: {
-          id: `anonymous-${crypto.randomUUID()}`,
-        },
-        account: {
-          id: 'asset-intelligence',
-        },
-      });
+        }
+      : {
+          id: getAnonId(),
+        };
+
+    const account = { id: 'asset-intelligence' };
+
+    // Initialize only once; use identify on subsequent changes to avoid interrupting guide rendering.
+    const w = window as unknown as { __pendoInitialized?: boolean; __pendoVisitorId?: string };
+
+    if (!w.__pendoInitialized) {
+      window.pendo.initialize({ visitor, account });
+      w.__pendoInitialized = true;
+      w.__pendoVisitorId = visitor.id;
+      return;
+    }
+
+    if (w.__pendoVisitorId !== visitor.id) {
+      window.pendo.identify({ visitor, account });
+      w.__pendoVisitorId = visitor.id;
     }
   }, [user]);
 }
