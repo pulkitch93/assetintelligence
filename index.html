@@ -26,12 +26,14 @@
 
     <!-- Content Security Policy for Pendo -->
     <meta http-equiv="Content-Security-Policy" content="
-      script-src 'self' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io 'unsafe-eval' 'unsafe-inline' data:;
-      style-src 'self' 'unsafe-inline' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io;
-      img-src 'self' data: cdn.pendo.io app.pendo.io content-6697256107573248.static.pendo.io;
-      connect-src 'self' app.pendo.io content-6697256107573248.static.pendo.io;
+      default-src 'self';
+      script-src 'self' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io pendo-static-5634156256657408.storage.googleapis.com pendo-io-bucket.storage.googleapis.com 'unsafe-eval' 'unsafe-inline' data:;
+      style-src 'self' 'unsafe-inline' cdn.pendo.io content-6697256107573248.static.pendo.io app.pendo.io pendo-static-5634156256657408.storage.googleapis.com;
+      img-src 'self' data: blob: cdn.pendo.io app.pendo.io content-6697256107573248.static.pendo.io pendo-static-5634156256657408.storage.googleapis.com pendo-io-bucket.storage.googleapis.com *.googleusercontent.com;
+      connect-src 'self' app.pendo.io content-6697256107573248.static.pendo.io pendo-static-5634156256657408.storage.googleapis.com pendo-io-bucket.storage.googleapis.com;
       frame-src 'self' app.pendo.io;
-      font-src 'self' cdn.pendo.io;
+      font-src 'self' cdn.pendo.io data:;
+      media-src 'self' pendo-static-5634156256657408.storage.googleapis.com;
     ">
   
     <!-- Pendo Analytics - Script loader only, initialization happens in React -->
