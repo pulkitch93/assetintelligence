@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, User, Lightbulb, Wrench, FileText, Clock, BarChart3, Settings, Users, Home, TrendingUp, AlertTriangle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Bot, Send, User, Lightbulb, Wrench, FileText, Clock, BarChart3, Settings, Users, Home, TrendingUp, AlertTriangle, Paperclip, ThumbsUp, ThumbsDown, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { FilterBar } from "@/components/UI/FilterBar";
 import { ExportButton } from "@/components/UI/ExportButton";
@@ -112,7 +112,13 @@ export const Copilot = () => {
   const navigate = useNavigate();
   
   // Pendo Conversations API tracking
-  const { trackPrompt, trackAgentResponse, trackUserReaction } = usePendoConversation();
+  const { trackPrompt, trackAgentResponse, trackUserReaction, resetConversation } = usePendoConversation();
+
+  const handleResetChat = () => {
+    setMessages([]);
+    setInputMessage("");
+    resetConversation();
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -365,26 +371,37 @@ export const Copilot = () => {
           </div>
 
           {/* Chat Interface */}
-          <div className="lg:col-span-3">
-            <Card className="h-full flex flex-col">
-              <CardHeader className="flex-none">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                    <Bot className="h-6 w-6 text-primary" />
-                    <span className="font-semibold">Maintenance AI</span>
+          <div className="lg:col-span-3 overflow-hidden">
+            <Card className="h-full flex flex-col overflow-hidden">
+              <CardHeader className="flex-none border-b">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
+                      <Bot className="h-6 w-6 text-primary" />
+                      <span className="font-semibold">Maintenance AI</span>
+                    </div>
+                    <Badge className={currentPersona.color}>
+                      <currentPersona.icon className="h-3 w-3 mr-1" />
+                      {filters.persona} Mode
+                    </Badge>
                   </div>
-                  <Badge className={currentPersona.color}>
-                    <currentPersona.icon className="h-3 w-3 mr-1" />
-                    {filters.persona} Mode
-                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetChat}
+                    className="gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    New Chat
+                  </Button>
                 </div>
               </CardHeader>
               
-              <CardContent className="flex-1 flex flex-col min-h-0 p-0">
-                <div className="flex flex-col h-full">
+              <CardContent className="flex-1 flex flex-col overflow-hidden p-0">
+                <div className="flex flex-col h-full overflow-hidden">
                   {/* Chat Messages */}
-                  <ScrollArea className="flex-1 p-4 min-h-0">
-                    <div className="space-y-4">
+                  <ScrollArea className="flex-1 p-4">
+                    <div className="space-y-4 pb-4">
                       {messages.map((message) => (
                         <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[80%] rounded-lg p-3 ${
