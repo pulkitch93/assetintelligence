@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, User, Lightbulb, Wrench, FileText, Clock, BarChart3, Settings, Users, Home, TrendingUp, AlertTriangle, Paperclip } from "lucide-react";
+import { Bot, Send, User, Lightbulb, Wrench, FileText, Clock, BarChart3, Settings, Users, Home, TrendingUp, AlertTriangle, Paperclip, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { FilterBar } from "@/components/UI/FilterBar";
 import { ExportButton } from "@/components/UI/ExportButton";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { usePendoConversation } from "@/hooks/usePendo";
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -18,6 +18,7 @@ interface ChatMessage {
   timestamp: Date;
   type?: 'query' | 'recommendation' | 'analysis' | 'report' | 'insight';
   attachments?: string[];
+  userReaction?: 'positive' | 'negative' | 'mixed' | null;
 }
 
 // Enhanced chat history with role-specific responses
@@ -109,6 +110,9 @@ export const Copilot = () => {
   const [filters, setFilters] = useState({ persona: 'Technician' });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  
+  // Pendo Conversations API tracking
+  const { trackPrompt, trackAgentResponse, trackUserReaction } = usePendoConversation();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,13 +122,15 @@ export const Copilot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = (overrideMessage?: string) => {
+    const messageToSend = overrideMessage || inputMessage;
+    if (!messageToSend.trim()) return;
     
+    const userMessageId = `msg_${Date.now()}`;
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: userMessageId,
       role: 'user',
-      content: inputMessage,
+      content: messageToSend,
       timestamp: new Date(),
       type: 'query'
     };
@@ -133,19 +139,51 @@ export const Copilot = () => {
     setInputMessage("");
     setIsLoading(true);
     
+    // Track user prompt with Pendo Conversations API
+    trackPrompt(userMessageId, messageToSend, {
+      modelUsed: 'gpt-4',
+      suggestedPrompt: overrideMessage !== undefined,
+      toolsUsed: [],
+      fileUploaded: false,
+    });
+    
     // Simulate AI response based on role and query type
     setTimeout(() => {
+      const assistantMessageId = `msg_${Date.now()}`;
+      const responseContent = generateRoleBasedResponse(messageToSend, filters.persona || 'Technician');
+      const responseType = determineResponseType(messageToSend);
+      const toolsUsed = responseType === 'analysis' ? ['knowledge_base', 'diagnostics'] : ['knowledge_base'];
+      
       const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: assistantMessageId,
         role: 'assistant',
-        content: generateRoleBasedResponse(inputMessage, filters.persona || 'Technician'),
+        content: responseContent,
         timestamp: new Date(),
-        type: determineResponseType(inputMessage)
+        type: responseType,
+        userReaction: null,
       };
       
       setMessages(prev => [...prev, assistantMessage]);
       setIsLoading(false);
+      
+      // Track agent response with Pendo Conversations API
+      trackAgentResponse(assistantMessageId, responseContent, {
+        modelUsed: 'gpt-4',
+        toolsUsed,
+      });
     }, 2000);
+  };
+
+  const handleReaction = (messageId: string, reaction: 'positive' | 'negative') => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId ? { ...msg, userReaction: reaction } : msg
+    ));
+    
+    // Track user reaction with Pendo Conversations API
+    trackUserReaction(messageId, reaction, {
+      modelUsed: 'gpt-4',
+      toolsUsed: ['knowledge_base'],
+    });
   };
 
   const generateRoleBasedResponse = (query: string, role: string): string => {
@@ -246,8 +284,7 @@ export const Copilot = () => {
   };
 
   const handleQuickAction = (query: string) => {
-    setInputMessage(query);
-    handleSendMessage();
+    handleSendMessage(query);
   };
 
   const formatTime = (timestamp: Date) => {
@@ -384,14 +421,38 @@ export const Copilot = () => {
                               </div>
                             )}
                             
-                            <div className={`text-xs mt-2 ${
+                            <div className={`flex items-center justify-between text-xs mt-2 ${
                               message.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
                             }`}>
-                              {formatTime(message.timestamp)}
-                              {message.type && message.type !== 'query' && (
-                                <Badge variant="outline" className="ml-2 text-xs">
-                                  {message.type}
-                                </Badge>
+                              <div className="flex items-center">
+                                {formatTime(message.timestamp)}
+                                {message.type && message.type !== 'query' && (
+                                  <Badge variant="outline" className="ml-2 text-xs">
+                                    {message.type}
+                                  </Badge>
+                                )}
+                              </div>
+                              
+                              {/* Reaction buttons for assistant messages */}
+                              {message.role === 'assistant' && (
+                                <div className="flex items-center gap-1 ml-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={`h-6 w-6 p-0 ${message.userReaction === 'positive' ? 'text-green-600 bg-green-100' : 'hover:text-green-600'}`}
+                                    onClick={() => handleReaction(message.id, 'positive')}
+                                  >
+                                    <ThumbsUp className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={`h-6 w-6 p-0 ${message.userReaction === 'negative' ? 'text-red-600 bg-red-100' : 'hover:text-red-600'}`}
+                                    onClick={() => handleReaction(message.id, 'negative')}
+                                  >
+                                    <ThumbsDown className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -428,7 +489,7 @@ export const Copilot = () => {
                         }}
                       />
                       <Button 
-                        onClick={handleSendMessage} 
+                        onClick={() => handleSendMessage()}
                         disabled={!inputMessage.trim() || isLoading}
                         size="sm"
                         className="self-end"
